@@ -9,6 +9,10 @@ class triangle {
         this.normal = normalize3(c)
     }
 
+    project(M4) {
+        
+    }
+
     draw3d() {
         stroke(color(1,1,1))
         strokeWeight(1)

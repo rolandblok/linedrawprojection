@@ -23,6 +23,7 @@ var p5gui_params = {
 
 
 var tria
+var view_projection_matrix
 
 // =================
 // ===setup=========
@@ -30,6 +31,7 @@ var tria
 function setup() {
   // createCanvas(400,400)
   // createCanvas(window.innerWidth, window.innerHeight, WEBGL)
+  // createCanvas(window.innerWidth, window.innerHeight)
   createCanvas(window.innerWidth, window.innerHeight,SVG)
   // https://github.com/zenozeng/p5.js-svg/
   // https://makeyourownalgorithmicart.blogspot.com/2018/03/creating-svg-with-p5js.html
@@ -40,6 +42,14 @@ function setup() {
   
   window.addEventListener("focus", function(event) { console.log( "window has focus"); paused = false }, false);
   window.addEventListener("blur", function(event) { console.log( "window lost focus");paused = true }, false);
+  
+  // setup camera
+  let cam_pos = [1,1,1]
+  let cam_look_at = [0,0,0]
+
+  let view_matrix = lookAt4m(cam_pos, cam_look_at, [0,0,1])
+  let projection_matrix = perspective4m(0.4, 1) //  fovy, aspect
+  view_projection_matrix = multiply4m(projection_matrix, view_matrix)
   
 
   sliderRange(0, 90, 1);
