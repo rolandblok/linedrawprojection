@@ -8,22 +8,19 @@ var uniqueID = (function() {
   return function() { return id++; };  // Return and increment
 })(); // Invoke the outer function after defining it.
 
+var my_triangles = []
+var my_lines = []
+var view_projection_matrix
+
+
 
 this.stats = new Stats();
 document.body.appendChild(this.stats.dom);
 stats.showPanel(0)  // 0: fps, 1: ms, 2: mb, 3+: custom
 
-// var p5_gui = createGui('roland')
-var p5gui;
-var p5gui_params = {
-  speed: 1,  speedMin : 0.1, speedMax: 5, speedStep: 0.05,
-  gravity: 100, gravityMin:0, gravityMax: 500, gravityStep: 1,
-  draw_mode: ['2d','3d', 'line']
-}
-
-
-var tria
-var view_projection_matrix
+var gui = new dat.GUI();
+var settings = []
+var setup_done = false
 
 // =================
 // ===setup=========
@@ -31,8 +28,8 @@ var view_projection_matrix
 function setup() {
   // createCanvas(400,400)
   // createCanvas(window.innerWidth, window.innerHeight, WEBGL)
-  // createCanvas(window.innerWidth, window.innerHeight)
-  createCanvas(window.innerWidth, window.innerHeight,SVG)
+  createCanvas(window.innerWidth, window.innerHeight)
+  // createCanvas(window.innerWidth, window.innerHeight,SVG)
   // https://github.com/zenozeng/p5.js-svg/
   // https://makeyourownalgorithmicart.blogspot.com/2018/03/creating-svg-with-p5js.html
   // https://stackoverflow.com/questions/23218174/how-do-i-save-export-an-svg-file-after-creating-an-svg-with-d3-js-ie-safari-an
@@ -43,24 +40,39 @@ function setup() {
   window.addEventListener("focus", function(event) { console.log( "window has focus"); paused = false }, false);
   window.addEventListener("blur", function(event) { console.log( "window lost focus");paused = true }, false);
   
-  // setup camera
-  let cam_pos = [1,1,1]
-  let cam_look_at = [0,0,0]
 
-  let view_matrix = lookAt4m(cam_pos, cam_look_at, [0,0,1])
-  let projection_matrix = perspective4m(0.4, 1) //  fovy, aspect
-  view_projection_matrix = multiply4m(projection_matrix, view_matrix)
-  
-
-  sliderRange(0, 90, 1);
-  var p5gui = createGui('roland').setPosition(width - 200, 0);;
-  p5gui.addObject(p5gui_params);
 
   a = [100,0,0]
   b = [0,100,0]
   c = [0,0,100]
-  tria = new triangle(a,b,c)
-  
+  my_triangles.push(new MyTriangle(a,b,c))
+
+  s = my_sphere([0,0,0], 50 )
+  my_triangles.concat(s)
+
+  my_lines.push(new MyLine([0,0,0], [100,0,0], [255,0,0]))
+  my_lines.push(new MyLine([0,0,0], [0,100,0], [0,255,0]))
+  my_lines.push(new MyLine([0,0,0], [0,0,100], [0,0,255]))
+
+
+
+  var gui_folder_camera = gui.addFolder('Camera')
+  settings.camera_x = 100
+  settings.camera_y = 100
+  settings.camera_z = 100
+  gui_folder_camera.add(settings,'camera_x').onChange(function(v){draw()})
+  gui_folder_camera.add(settings,'camera_y').onChange(function(v){draw()})
+  gui_folder_camera.add(settings,'camera_z').onChange(function(v){draw()})
+  settings.look_at_x= 0
+  settings.look_at_y= 0
+  settings.look_at_z = 0
+  gui_folder_camera.add(settings,'look_at_x').onChange(function(v){draw()})
+  gui_folder_camera.add(settings,'look_at_y').onChange(function(v){draw()})
+  gui_folder_camera.add(settings,'look_at_z').onChange(function(v){draw()})
+  gui_folder_camera.open()
+
+  setup_done = true
+
 }
 
 // =================
@@ -70,16 +82,42 @@ var last_time_ms = 0
 var dirs = [-1, 1]
 
 function draw() {
+  if (!setup_done) return
+  
   this.stats.begin();
 
   dt_ms = millis() - last_time_ms
   last_time_ms = millis()
   
+    // setup camera
+    let cam_pos =     [settings.camera_x,  settings.camera_y,  settings.camera_z]
+    let cam_look_at = [settings.look_at_x, settings.look_at_y, settings.look_at_z]
+  
+    let view_matrix = lookAt4m(cam_pos, cam_look_at, [0,0,1])
+    let projection_matrix = perspective4m(0.4, 1) //  fovy, aspect
+    view_projection_matrix = multiply4m(projection_matrix, view_matrix)
+
+
+    for (let my_triangle of my_triangles) {
+      my_triangle.project(view_projection_matrix)
+    }
+    
+    for (my_line of my_lines) {
+      my_line.project(view_projection_matrix)
+    }
+
   
   // draw scene
   background(200,200,200); // Set the background to white
 
-  tria.draw2d(window.innerWidth, window.innerHeight)
+  
+  for (let my_triangle of my_triangles) {
+    my_triangle.draw2d(window.innerWidth, window.innerHeight)
+  }
+  for (my_line of my_lines) {
+    my_line.draw2d(window.innerWidth, window.innerHeight)
+  }
+  // tria.draw3d(window.innerWidth, window.innerHeight)
 
 
   this.stats.end();

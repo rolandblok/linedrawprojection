@@ -21,9 +21,9 @@ const sub3=(a,b)=>[a[0]-b[0],a[1]-b[1],a[2]-b[2]];
 const dot3=(a,b)=>a[0]*b[0]+a[1]*b[1]+a[2]*b[2];
 const cross3=(a,b)=>[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]];
 // vec4 functions
-const transform4=(a,b)=>{
+const transform4=(v,M)=>{
     const d=new Float32Array(4);
-    for(let c=0;4>c;c++)d[c]=b[c]*a[0]+b[c+4]*a[1]+b[c+8]*a[2]+b[c+12];
+    for(let c=0;4>c;c++)d[c]=M[c]*v[0]+M[c+4]*v[1]+M[c+8]*v[2]+M[c+12]*v[3];
     return d;
 }
 // mat4 functions
@@ -54,4 +54,10 @@ const perspective4m=(a,b)=>{ // fovy, aspect
     c[0]=c[5]/b;
     c[10]=c[11]=-1;
     return c;
+}
+const center2dscreen=(w,h,v4)=> {
+    const d=new Float32Array(2);
+    d[0]=w/2+v4[0]
+    d[1]=h/2-v4[1]
+    return d
 }
