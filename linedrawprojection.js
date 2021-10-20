@@ -49,7 +49,10 @@ function setup() {
 
   let s = my_sphere([50,0,0], 50, 2 )
   my_triangles = my_triangles.concat(s)
+  s = my_sphere([0,50,0], 20, 2 )
+  my_triangles = my_triangles.concat(s)
 
+  
   my_lines.push(new MyLine([0,0,0], [100,0,0], [255,0,0]))
   my_lines.push(new MyLine([0,0,0], [0,100,0], [0,255,0]))
   my_lines.push(new MyLine([0,0,0], [0,0,100], [0,0,255]))
