@@ -1,7 +1,9 @@
 class MyTriangle {
     constructor (p1,p2,p3) {
 
+        this.draw_edges = true
         this.draw_normal = true
+        this.draw_hatching = true
 
         this.p1 = [...p1]
         this.p2 = [...p2]
@@ -34,6 +36,10 @@ class MyTriangle {
         this.v2 = transform4(p2, M4)
         this.v3 = transform4(p3, M4)
         this.vn = normal3(this.v1,this.v2,this.v3)
+
+        this.h = [] // hatches
+        
+
     }
 
     draw3d() {
@@ -50,14 +56,16 @@ class MyTriangle {
 
     draw2d(w, h) {
         if (this.vn[2]<0) {
-            stroke(color(1,1,1))
-            strokeWeight(1)
-            let v1 = center2dscreen(w,h,this.v1)
-            let v2 = center2dscreen(w,h,this.v2)
-            let v3 = center2dscreen(w,h,this.v3)
-            line(v1[0], v1[1], v2[0], v2[1])
-            line(v2[0], v2[1], v3[0], v3[1])
-            line(v3[0], v3[1], v1[0], v1[1])
+            let s1 = center2dscreen(w,h,this.v1)
+            let s2 = center2dscreen(w,h,this.v2)
+            let s3 = center2dscreen(w,h,this.v3)
+            if (this.draw_edges){
+                stroke(color(1,1,1))
+                strokeWeight(1)
+                line(s1[0], s1[1], s2[0], s2[1])
+                line(s2[0], s2[1], s3[0], s3[1])
+                line(s3[0], s3[1], s1[0], s1[1])
+            }
 
             if (this.draw_normal) {
                 // stroke(color(255,0,0))
@@ -65,9 +73,25 @@ class MyTriangle {
                 let center  = centerv3(this.v1,this.v2,this.v3)
                 let scalen = scale3(this.vn,50)
                 let center2 = add3(scalen, center)
-                let c1 = center2dscreen(w,h,center)
-                let c2 = center2dscreen(w,h,center2)
-                line(c1[0], c1[1], c2[0], c2[1])
+                let s1 = center2dscreen(w,h,center)
+                let s2 = center2dscreen(w,h,center2)
+                line(s1[0], s1[1], s2[0], s2[1])
+            }
+
+            if (this.draw_hatching) {
+                let min_x = s1(0)
+                if (s2(0) < min_x) min_x = s2(0)
+                if (s3(0) < min_x) min_x = s3(0)
+                let max_x = s1(0)
+                if (s2(0) > max_x) max_x = s2(0)
+                if (s3(0) > max_x) max_x = s3(0)
+
+                let min_y = s1(1)
+                if (s2(1) < min_y) min_y = s2(1)
+                if (s3(1) < min_y) min_y = s3(1)
+                let max_y = s1(0)
+                if (s2(1) > max_y) max_y = s2(1)
+                if (s3(1) > max_y) max_y = s3(1)
             }
 
         }
