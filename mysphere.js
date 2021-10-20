@@ -1,7 +1,7 @@
-function my_sphere(p,R) {
+function my_sphere(p,R,devisions) {
     // https://www.opengl.org.ru/docs/pg/0208.html
-    let X=R*.525731112119133606 
-    let Z=R*.850650808352039932
+    let X=.525731112119133606 
+    let Z=.850650808352039932
     
     let vdata = [    //[12][3] 
     [-X, 0.0, Z], [X, 0.0, Z], [-X, 0.0, -Z], [X, 0.0, -Z],    
@@ -23,8 +23,34 @@ function my_sphere(p,R) {
         let v2 =  vdata[t2]
         let t3 = tindices[i][2]
         let v3 =  vdata[t3]
-        triangles.push(new MyTriangle( v1, v2, v3 ))
+        sub_triangles = subdivide( v1,v2,v3, devisions)
+        triangles = triangles.concat(sub_triangles)
+        // triangles.push(new MyTriangle( v1, v2, v3 ))
     }
 
+
+    for (let t of triangles) {
+        t.scale(R)
+        t.translate(p)
+    }
     return triangles
+}
+function subdivide(v1,v2,v3, depth) {
+    triangles = []
+    if (depth == 0) {
+        triangles.push(new MyTriangle( v1, v2, v3 ))
+        return triangles
+    }
+    for (let i = 0; i < 3; i++) {
+        let v12 = normalize3(add3(v1,v2))
+        let v23 = normalize3(add3(v2,v3))
+        let v31 = normalize3(add3(v3,v1))
+
+        triangles = triangles.concat(subdivide( v1,v12,v31, depth - 1))
+        triangles = triangles.concat(subdivide( v2,v23,v12, depth - 1))
+        triangles = triangles.concat(subdivide( v3,v31,v23, depth - 1))
+        triangles = triangles.concat(subdivide( v12,v23,v31, depth - 1))
+        return triangles
+    }
+
 }

@@ -42,13 +42,13 @@ function setup() {
   
 
 
-  a = [100,0,0]
-  b = [0,100,0]
-  c = [0,0,100]
+  c = [20,0,0]
+  b = [0,20,0]
+  a = [0,0,20]
   my_triangles.push(new MyTriangle(a,b,c))
 
-  s = my_sphere([0,0,0], 50 )
-  my_triangles.concat(s)
+  let s = my_sphere([50,0,0], 50, 2 )
+  my_triangles = my_triangles.concat(s)
 
   my_lines.push(new MyLine([0,0,0], [100,0,0], [255,0,0]))
   my_lines.push(new MyLine([0,0,0], [0,100,0], [0,255,0]))
@@ -117,7 +117,6 @@ function draw() {
   for (my_line of my_lines) {
     my_line.draw2d(window.innerWidth, window.innerHeight)
   }
-  // tria.draw3d(window.innerWidth, window.innerHeight)
 
 
   this.stats.end();
