@@ -1,3 +1,6 @@
+const X = 0
+const Y = 1
+const Z = 2
 // vec2 functions
 const equal2=(a,b)=>0.001>dist_sqr2(a,b);
 const scale2=(a,b)=>[a[0]*b,a[1]*b];

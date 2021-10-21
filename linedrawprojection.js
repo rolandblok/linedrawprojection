@@ -8,11 +8,6 @@ var uniqueID = (function() {
   return function() { return id++; };  // Return and increment
 })(); // Invoke the outer function after defining it.
 
-var my_triangles = []
-var my_lines = []
-var view_projection_matrix
-
-
 
 this.stats = new Stats();
 document.body.appendChild(this.stats.dom);
@@ -40,22 +35,6 @@ function setup() {
   window.addEventListener("focus", function(event) { console.log( "window has focus"); paused = false }, false);
   window.addEventListener("blur", function(event) { console.log( "window lost focus");paused = true }, false);
   
-
-
-  c = [20,0,0]
-  b = [0,20,0]
-  a = [0,0,20]
-  my_triangles.push(new MyTriangle(a,b,c))
-
-  let s = my_sphere([50,0,0], 50, 2 )
-  my_triangles = my_triangles.concat(s)
-  s = my_sphere([0,50,0], 20, 2 )
-  my_triangles = my_triangles.concat(s)
-
-  
-  my_lines.push(new MyLine([0,0,0], [100,0,0], [255,0,0]))
-  my_lines.push(new MyLine([0,0,0], [0,100,0], [0,255,0]))
-  my_lines.push(new MyLine([0,0,0], [0,0,100], [0,0,255]))
 
 
 
@@ -92,6 +71,29 @@ function draw() {
   dt_ms = millis() - last_time_ms
   last_time_ms = millis()
   
+  var my_triangles = []
+  var my_lines = []
+  var view_projection_matrix
+  
+  
+  
+  c = [20,0,0]
+  b = [0,20,0]
+  a = [0,0,20]
+  my_triangles.push(new MyTriangle(a,b,c))
+
+  // let s = my_sphere([50,-100,0], 50, 2 )
+  // my_triangles = my_triangles.concat(s)
+  // s = my_sphere([0,50,0], 20, 2 )
+  // my_triangles = my_triangles.concat(s)
+
+  
+  my_lines.push(new MyLine([0,0,0], [100,0,0], [255,0,0]))
+  my_lines.push(new MyLine([0,0,0], [0,100,0], [0,255,0]))
+  my_lines.push(new MyLine([0,0,0], [0,0,100], [0,0,255]))
+
+
+
     // setup camera
     let cam_pos =     [settings.camera_x,  settings.camera_y,  settings.camera_z]
     let cam_look_at = [settings.look_at_x, settings.look_at_y, settings.look_at_z]
