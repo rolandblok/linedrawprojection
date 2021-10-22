@@ -64,7 +64,7 @@ class MyTriangle {
         endShape()
     }
 
-    draw2d(w, h) {
+    draw2d(w, h, my_light) {
         if (this.normal[2]<0){  // only draw fronts
             // let s1 = center2dscreen(w,h,this.v1)
             // let s2 = center2dscreen(w,h,this.v2)
@@ -119,7 +119,9 @@ class MyTriangle {
 
                 // https://www.tutorialspoint.com/Check-whether-a-given-point-lies-inside-a-Triangle
 
-                let hatch_spacing = 5 //pixels, to be replaces with shading
+                let shade = -dot3(this.normal, my_light);
+                let hatch_spacing =  0.002 + (1-shade)*0.002 //pixels, to be replaces with shading
+                // let hatch_spacing = 0.002
                 for (let x = sqr_bl[X]; x < sqr_tr[X]; x += hatch_spacing) {
                     let b = [x,bottom[Y], 0]
                     let t = [x, top[Y], 0]

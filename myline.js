@@ -21,13 +21,12 @@ class MyLine {
 
     project(M4) {
         let p0 = [...this.p[0]]
-        p0.push(1)
         let p1 = [...this.p[1]]
-        p1.push(1)
 
-        this.p[0] = transform4(p0, M4)  // don't know yet if the array being 4 elemenst is problem
-        this.p[1] = transform4(p1, M4)
+        this.p[0] = (transform4(p0, M4))  // don't know yet if the array being 4 elemenst is problem
+        this.p[1] = (transform4(p1, M4))
 
+        
 
 
     }

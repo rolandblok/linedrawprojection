@@ -38,10 +38,20 @@ function setup() {
 
 
 
+  var gui_folder_frustrum = gui.addFolder('frustrum')
+  settings.fov = 45
+  settings.aspect = window.innerWidth / window.innerHeight
+  settings.near = 0.2
+  settings.far = 1000
+  gui_folder_frustrum.add(settings,'fov').onChange(function(v){draw()})
+  gui_folder_frustrum.add(settings,'aspect').onChange(function(v){draw()})
+  gui_folder_frustrum.add(settings,'near').onChange(function(v){draw()})
+  gui_folder_frustrum.add(settings,'far').onChange(function(v){draw()})
+  gui_folder_frustrum.open()
   var gui_folder_camera = gui.addFolder('Camera')
-  settings.camera_x = 100
-  settings.camera_y = 100
-  settings.camera_z = 100
+  settings.camera_x = 400
+  settings.camera_y = 400
+  settings.camera_z = 200
   gui_folder_camera.add(settings,'camera_x').onChange(function(v){draw()})
   gui_folder_camera.add(settings,'camera_y').onChange(function(v){draw()})
   gui_folder_camera.add(settings,'camera_z').onChange(function(v){draw()})
@@ -75,7 +85,9 @@ function draw() {
   var my_lines = []
   var view_projection_matrix
   
-  var light = []
+  var my_light = normalize3([-10, 0, -10])
+  
+
   
   c = [20,0,0]
   b = [0,20,0]
@@ -86,38 +98,53 @@ function draw() {
   my_triangles = my_triangles.concat(s)
   s = my_sphere([0,50,0], 20, 2 )
   my_triangles = my_triangles.concat(s)
+  s = my_sphere([0,-50,50], 20, 2 )
+  my_triangles = my_triangles.concat(s)
+  s = my_sphere([0,-150,100], 20, 2 )
+  my_triangles = my_triangles.concat(s)
 
-  
+  s = my_sphere([-220,-220,0], 20, 2 )
+  my_triangles = my_triangles.concat(s)
+
+  my_lines.push(new MyLine([0,0,0], scale3(my_light,150), [0,0,0]))
+
   my_lines.push(new MyLine([0,0,0], [100,0,0], [255,0,0]))
   my_lines.push(new MyLine([0,0,0], [0,100,0], [0,255,0]))
   my_lines.push(new MyLine([0,0,0], [0,0,100], [0,0,255]))
 
 
+  // setup camera
+  let cam_pos =     [settings.camera_x,  settings.camera_y,  settings.camera_z]
+  let cam_look_at = [settings.look_at_x, settings.look_at_y, settings.look_at_z]
 
-    // setup camera
-    let cam_pos =     [settings.camera_x,  settings.camera_y,  settings.camera_z]
-    let cam_look_at = [settings.look_at_x, settings.look_at_y, settings.look_at_z]
-  
-    let view_matrix = lookAt4m(cam_pos, cam_look_at, [0,0,1])
-    let projection_matrix = perspective4m(0.4, 1) //  fovy, aspect
-    view_projection_matrix = multiply4m(projection_matrix, view_matrix)
+  let view_matrix = lookAt4m(cam_pos, cam_look_at, [0,0,1])
+  let projection_matrix = createPerspectiveUsingFrustum(settings.fov, settings.aspect, settings.near, settings.far)
+  // let projection_matrix = perspective4m(0.4, 1) //  fovy, aspect
+  view_projection_matrix = multiply4m(projection_matrix, view_matrix)
 
-
-    for (let my_triangle of my_triangles) {
-      my_triangle.project(view_projection_matrix)
-    }
-    
-    for (my_line of my_lines) {
-      my_line.project(view_projection_matrix)
-    }
 
   
+
+  // project the diorama
+  for (let my_triangle of my_triangles) {
+    my_triangle.project(view_projection_matrix)
+  }
+  
+  for (my_line of my_lines) {
+    my_line.project(view_projection_matrix)
+  }
+
+  my_light = transform4(my_light, view_projection_matrix)
+  
+  my_light = normalize3(my_light)
+  
+
   // draw scene
   background(200,200,200); // Set the background to white
 
   
   for (let my_triangle of my_triangles) {
-    my_triangle.draw2d(window.innerWidth, window.innerHeight)
+    my_triangle.draw2d(window.innerWidth, window.innerHeight, my_light)
   }
   for (my_line of my_lines) {
     my_line.draw2d(window.innerWidth, window.innerHeight)
@@ -151,4 +178,6 @@ function keyPressed(event) {
 function resize() {
   console.log("resize")
   resizeCanvas(window.innerWidth, window.innerHeight)
+  settings.aspect = window.innerWidth / window.innerHeight
+
 }
