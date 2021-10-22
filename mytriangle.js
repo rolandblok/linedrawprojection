@@ -92,22 +92,22 @@ class MyTriangle {
             }
 
             if (this.draw_hatching) {
-                let s1 = this.lines[0].p[0]
-                let s2 = this.lines[1].p[0]
-                let s3 = this.lines[2].p[0]
-                let left = s1
-                if (s2[X] < left[X]) left = s2
-                if (s3[X] < left[X]) left = s3
-                let right = s1
-                if (s2[X] > right[X]) right = s2
-                if (s3[X] > right[X]) right = s3
+                let p1 = this.lines[0].p[0]
+                let p2 = this.lines[1].p[0]
+                let p3 = this.lines[2].p[0]
+                let left = p1
+                if (p2[X] < left[X]) left = p2
+                if (p3[X] < left[X]) left = p3
+                let right = p1
+                if (p2[X] > right[X]) right = p2
+                if (p3[X] > right[X]) right = p3
 
-                let bottom = s1
-                if (s2[Y] < bottom[Y]) bottom = s2
-                if (s3[Y] < bottom[Y]) bottom = s3
-                let top = s1
-                if (s2[Y] > top[Y]) top = s2
-                if (s3[Y] > top[Y]) top = s3
+                let bottom = p1
+                if (p2[Y] < bottom[Y]) bottom = p2
+                if (p3[Y] < bottom[Y]) bottom = p3
+                let top = p1
+                if (p2[Y] > top[Y]) top = p2
+                if (p3[Y] > top[Y]) top = p3
 
                 // make a square around the triangle
                 let sqr_bl = Array(2)
@@ -116,6 +116,8 @@ class MyTriangle {
                 let sqr_tr = Array(2)
                 sqr_tr[X] = right[X]
                 sqr_tr[Y] = top[Y]
+
+                // https://www.tutorialspoint.com/Check-whether-a-given-point-lies-inside-a-Triangle
 
                 let hatch_spacing = 5 //pixels, to be replaces with shading
                 for (let x = sqr_bl[X]; x < sqr_tr[X]; x += hatch_spacing) {
@@ -126,10 +128,10 @@ class MyTriangle {
                     let i_is = []  // intersectes within the square/triangle
                     for (let i = 0; i < NO_LINES; i ++) {
                         let is = hatch_line.intersection2d(this.lines[i])
-                        if ((is[X] >= sqr_bl[X]) && (is[Y] >= sqr_bl[Y]) && 
-                            (is[X] <= sqr_tr[X]) && (is[Y] <= sqr_tr[Y])    ) {
-                                i_is.push(is)
-                            }
+                        let is_in = insideTriangle(p1,p2,p3,is)
+                        if (is_in) {
+                            i_is.push(is)
+                        }
                     }
                     if (i_is.length == 2) {
                         let s1 = center2dscreen(w,h,i_is[0])
