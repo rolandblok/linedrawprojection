@@ -75,17 +75,17 @@ function draw() {
   var my_lines = []
   var view_projection_matrix
   
-  
+  var light = []
   
   c = [20,0,0]
   b = [0,20,0]
   a = [0,0,20]
   my_triangles.push(new MyTriangle(a,b,c))
 
-  // let s = my_sphere([50,-100,0], 50, 2 )
-  // my_triangles = my_triangles.concat(s)
-  // s = my_sphere([0,50,0], 20, 2 )
-  // my_triangles = my_triangles.concat(s)
+  let s = my_sphere([50,-100,0], 50, 2 )
+  my_triangles = my_triangles.concat(s)
+  s = my_sphere([0,50,0], 20, 2 )
+  my_triangles = my_triangles.concat(s)
 
   
   my_lines.push(new MyLine([0,0,0], [100,0,0], [255,0,0]))
