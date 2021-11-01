@@ -95,6 +95,7 @@ const perspective4m=(a,b)=>{ // fovy, aspect
     return M;
   }
 const createPerspectiveUsingFrustum=(fovy, aspect, near, far)=>{
+    // https://www.scratchapixel.com/code.php?id=4&origin=/lessons/3d-basic-rendering/perspective-and-orthographic-projection-matrix
     // https://learnwebgl.brown37.net/08_projections/projections_perspective.html
     let top, bottom, left, right;
     top = near * Math.tan((fovy*(Math.PI/180))/2);

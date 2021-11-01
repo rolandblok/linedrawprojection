@@ -38,6 +38,14 @@ function setup() {
 
 
 
+  var gui_folder_draw = gui.addFolder('draw options')
+  settings.draw_edges = false
+  settings.draw_normal = false
+  settings.draw_hatching = true
+  gui_folder_draw.add(settings,'draw_edges').onChange(function(v){draw()})
+  gui_folder_draw.add(settings,'draw_normal').onChange(function(v){draw()})
+  gui_folder_draw.add(settings,'draw_hatching').onChange(function(v){draw()})
+  gui_folder_draw.open()
   var gui_folder_frustrum = gui.addFolder('frustrum')
   settings.fov = 45
   settings.aspect = window.innerWidth / window.innerHeight
@@ -49,15 +57,15 @@ function setup() {
   gui_folder_frustrum.add(settings,'far').onChange(function(v){draw()})
   gui_folder_frustrum.open()
   var gui_folder_camera = gui.addFolder('Camera')
-  settings.camera_x = 400
-  settings.camera_y = 400
+  settings.camera_x = 250
+  settings.camera_y = 250
   settings.camera_z = 200
   gui_folder_camera.add(settings,'camera_x').onChange(function(v){draw()})
   gui_folder_camera.add(settings,'camera_y').onChange(function(v){draw()})
   gui_folder_camera.add(settings,'camera_z').onChange(function(v){draw()})
   settings.look_at_x= 0
   settings.look_at_y= 0
-  settings.look_at_z = 0
+  settings.look_at_z = 50
   gui_folder_camera.add(settings,'look_at_x').onChange(function(v){draw()})
   gui_folder_camera.add(settings,'look_at_y').onChange(function(v){draw()})
   gui_folder_camera.add(settings,'look_at_z').onChange(function(v){draw()})
@@ -94,9 +102,9 @@ function draw() {
   a = [0,0,20]
   my_triangles.push(new MyTriangle(a,b,c))
 
-  let s = my_sphere([50,-100,0], 50, 2 )
+  let s = my_sphere([50,-100,0], 50, 3 )
   my_triangles = my_triangles.concat(s)
-  s = my_sphere([0,50,0], 20, 2 )
+  s = my_sphere([0,50,0], 20, 1 )
   my_triangles = my_triangles.concat(s)
   s = my_sphere([0,-50,50], 20, 2 )
   my_triangles = my_triangles.concat(s)
@@ -122,7 +130,10 @@ function draw() {
   // let projection_matrix = perspective4m(0.4, 1) //  fovy, aspect
   view_projection_matrix = multiply4m(projection_matrix, view_matrix)
 
-
+  // lighten the diorama
+  for (let my_triangle of my_triangles) {
+    my_triangle.light(my_light)
+  }
   
 
   // project the diorama
@@ -144,7 +155,7 @@ function draw() {
 
   
   for (let my_triangle of my_triangles) {
-    my_triangle.draw2d(window.innerWidth, window.innerHeight, my_light)
+    my_triangle.draw2d(window.innerWidth, window.innerHeight, my_light, settings.draw_edges,settings.draw_normal,settings.draw_hatching)
   }
   for (my_line of my_lines) {
     my_line.draw2d(window.innerWidth, window.innerHeight)

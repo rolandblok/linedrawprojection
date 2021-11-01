@@ -55,9 +55,9 @@ class MyLine {
     get y2() {return this.p[1][Y] }
 
     /**
-     * Intersection with the PROJECTED line in 2 dimensions (xy)
+     * Intersection with the other line in 2 dimensions (xy)
      */
-    intersection2d(L2) {
+    intersectionXY(L2) {
         // https://en.wikipedia.org/wiki/Line%E2%80%93line_intersection
         let x1 = this.x1
         let x2 = this.x2

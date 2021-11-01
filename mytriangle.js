@@ -4,10 +4,6 @@ const NO_LINES = 3
 class MyTriangle {
     constructor (p1,p2,p3) {
 
-        this.draw_edges = true
-        this.draw_normal = false
-        this.draw_hatching = true
-
         this.lines = Array(NO_LINES)
         this.lines[0] = new MyLine(p1, p2)
         this.lines[1] = new MyLine(p2, p3)
@@ -32,6 +28,15 @@ class MyTriangle {
 
     _det_normal() {
         this.normal = normal3(this.lines[0].p[0],this.lines[1].p[0],this.lines[2].p[0])
+    }
+
+    light(l) {
+        let shading = dot3(this.normal, l)
+        if (shading > 0) {
+            this.shading = shading
+        } else {
+            this.shading = 0;
+        }
     }
 
     project(M4) {
@@ -64,12 +69,14 @@ class MyTriangle {
         endShape()
     }
 
-    draw2d(w, h, my_light) {
+    draw2d(w, h, my_light, draw_edges=true, draw_normal=true, draw_hatching=true) {
+        stroke(color(1,1,1))
+
         if (this.normal[2]<0){  // only draw fronts
             // let s1 = center2dscreen(w,h,this.v1)
             // let s2 = center2dscreen(w,h,this.v2)
             // let s3 = center2dscreen(w,h,this.v3)
-            if (this.draw_edges){
+            if (draw_edges){
                 for (let my_line of this.lines) {
                     my_line.draw2d(w,h)
                 }
@@ -80,7 +87,7 @@ class MyTriangle {
                 // line(s3[X], s3[Y], s1[X], s1[Y])
             }
 
-            if (this.draw_normal) {
+            if (draw_normal) {
                 // stroke(color(255,0,0))
                 // strokeWeight(1)
                 let center  = centerv3(this.v1,this.v2,this.v3)
@@ -91,7 +98,7 @@ class MyTriangle {
                 line(s1[X], s1[Y], s2[X], s2[Y])
             }
 
-            if (this.draw_hatching) {
+            if (draw_hatching) {
                 let p1 = this.lines[0].p[0]
                 let p2 = this.lines[1].p[0]
                 let p3 = this.lines[2].p[0]
@@ -119,8 +126,8 @@ class MyTriangle {
 
                 // https://www.tutorialspoint.com/Check-whether-a-given-point-lies-inside-a-Triangle
 
-                let shade = -dot3(this.normal, my_light);
-                let hatch_spacing =  0.002 + (1-shade)*0.002 //pixels, to be replaces with shading
+
+                let hatch_spacing =  0.0002 + (this.shading)*0.003 //pixels, to be replaces with shading
                 // let hatch_spacing = 0.002
                 for (let x = sqr_bl[X]; x < sqr_tr[X]; x += hatch_spacing) {
                     let b = [x,bottom[Y], 0]
@@ -129,7 +136,7 @@ class MyTriangle {
                     let hatch_line = new MyLine(b,t)
                     let i_is = []  // intersectes within the square/triangle
                     for (let i = 0; i < NO_LINES; i ++) {
-                        let is = hatch_line.intersection2d(this.lines[i])
+                        let is = hatch_line.intersectionXY(this.lines[i])
                         let is_in = insideTriangle(p1,p2,p3,is)
                         if (is_in) {
                             i_is.push(is)
