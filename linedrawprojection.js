@@ -23,8 +23,8 @@ var setup_done = false
 function setup() {
   // createCanvas(400,400)
   // createCanvas(window.innerWidth, window.innerHeight, WEBGL)
-  createCanvas(window.innerWidth, window.innerHeight)
-  // createCanvas(window.innerWidth, window.innerHeight,SVG)
+  // createCanvas(window.innerWidth, window.innerHeight)
+  createCanvas(window.innerWidth, window.innerHeight,SVG)
   // https://github.com/zenozeng/p5.js-svg/
   // https://makeyourownalgorithmicart.blogspot.com/2018/03/creating-svg-with-p5js.html
   // https://stackoverflow.com/questions/23218174/how-do-i-save-export-an-svg-file-after-creating-an-svg-with-d3-js-ie-safari-an
@@ -37,6 +37,25 @@ function setup() {
   
 
 
+
+  settings.downloadSvg=()=>
+  {
+      let svgElement = document.getElementsByTagName('svg')[0];
+      let svg = svgElement.outerHTML;
+      let file = new Blob([svg], { type: 'plain/text' });
+      let a = document.createElement("a"), url = URL.createObjectURL(file);
+  
+      a.href = url;
+      a.download = 'exported.svg';    
+      document.body.appendChild(a);
+      a.click();
+  
+      setTimeout(function() 
+      {
+          document.body.removeChild(a);
+          window.URL.revokeObjectURL(url);  
+      }, 0); 
+  }
 
   var gui_folder_draw = gui.addFolder('draw options')
   settings.draw_edges = false
@@ -70,6 +89,8 @@ function setup() {
   gui_folder_camera.add(settings,'look_at_y').onChange(function(v){draw()})
   gui_folder_camera.add(settings,'look_at_z').onChange(function(v){draw()})
   gui_folder_camera.open()
+  
+  gui.add(settings, 'downloadSvg')
 
   setup_done = true
 
