@@ -23,8 +23,8 @@ var setup_done = false
 function setup() {
   // createCanvas(400,400)
   // createCanvas(window.innerWidth, window.innerHeight, WEBGL)
-  // createCanvas(window.innerWidth, window.innerHeight)
-  createCanvas(window.innerWidth, window.innerHeight,SVG)
+  createCanvas(window.innerWidth, window.innerHeight)
+  // createCanvas(window.innerWidth, window.innerHeight,SVG)
   // https://github.com/zenozeng/p5.js-svg/
   // https://makeyourownalgorithmicart.blogspot.com/2018/03/creating-svg-with-p5js.html
   // https://stackoverflow.com/questions/23218174/how-do-i-save-export-an-svg-file-after-creating-an-svg-with-d3-js-ie-safari-an
@@ -58,9 +58,9 @@ function setup() {
   }
 
   var gui_folder_draw = gui.addFolder('draw options')
-  settings.draw_edges = false
+  settings.draw_edges = true
   settings.draw_normal = false
-  settings.draw_hatching = true
+  settings.draw_hatching = false
   gui_folder_draw.add(settings,'draw_edges').onChange(function(v){draw()})
   gui_folder_draw.add(settings,'draw_normal').onChange(function(v){draw()})
   gui_folder_draw.add(settings,'draw_hatching').onChange(function(v){draw()})
@@ -118,7 +118,7 @@ function draw() {
   
 
   
-  c = [20,0,0]
+  c = [40,0,0]
   b = [0,20,0]
   a = [0,0,20]
   my_triangles.push(new MyTriangle(a,b,c))

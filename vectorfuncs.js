@@ -31,7 +31,7 @@ const transform4=(v,M)=>{
     const d=new Float32Array(3);
     let c = 3
     w =M[c]*v[0]+M[c+4]*v[1]+M[c+8]*v[2]+M[c+12]
-    for(c=0;c<3;c++)d[c]=(M[c]*v[0]+M[c+4]*v[1]+M[c+8]*v[2]+M[c+12])/w;
+    for(c=0;c<3;c++) d[c]=(M[c]*v[0]+M[c+4]*v[1]+M[c+8]*v[2]+M[c+12])/w;
     return d;
 }
 // const transform4=(v,M)=>{
