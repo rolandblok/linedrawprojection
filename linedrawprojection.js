@@ -30,7 +30,7 @@ function setup() {
   // https://stackoverflow.com/questions/23218174/how-do-i-save-export-an-svg-file-after-creating-an-svg-with-d3-js-ie-safari-an
   
   noLoop();
-  window.addEventListener("resize", this.resize, false);
+  addEventListener("resize", this.resize, false);
   
   window.addEventListener("focus", function(event) { console.log( "window has focus"); paused = false }, false);
   window.addEventListener("blur", function(event) { console.log( "window lost focus");paused = true }, false);
@@ -74,7 +74,7 @@ function setup() {
   gui_folder_frustrum.add(settings,'aspect').onChange(function(v){draw()})
   gui_folder_frustrum.add(settings,'near').onChange(function(v){draw()})
   gui_folder_frustrum.add(settings,'far').onChange(function(v){draw()})
-  gui_folder_frustrum.open()
+  // gui_folder_frustrum.open()
   var gui_folder_camera = gui.addFolder('Camera')
   settings.camera_x = 250
   settings.camera_y = 250
@@ -88,9 +88,17 @@ function setup() {
   gui_folder_camera.add(settings,'look_at_x').onChange(function(v){draw()})
   gui_folder_camera.add(settings,'look_at_y').onChange(function(v){draw()})
   gui_folder_camera.add(settings,'look_at_z').onChange(function(v){draw()})
-  gui_folder_camera.open()
-  
+  // gui_folder_camera.open()
+  var gui_folder_hatching = gui.addFolder('Hatching')
+  settings.hatch_min = 0.0002 
+  settings.hatch_grad  = 0.003
+  gui_folder_hatching.add(settings,'hatch_min').onChange(function(v){draw()})
+  gui_folder_hatching.add(settings,'hatch_grad').onChange(function(v){draw()})
+  gui_folder_hatching.open()
+
   gui.add(settings, 'downloadSvg')
+  settings.lines_drawn = 0
+  gui.add(settings, 'lines_drawn').listen()
 
   setup_done = true
 
@@ -170,17 +178,27 @@ function draw() {
   
   my_light = normalize3(my_light)
   
-
-  // draw scene
-  background(200,200,200); // Set the background to white
-
+  // get all lines, and determine visibility
+  let all_lines = []
   
   for (let my_triangle of my_triangles) {
-    my_triangle.draw2d(window.innerWidth, window.innerHeight, my_light, settings.draw_edges,settings.draw_normal,settings.draw_hatching)
+    all_lines.concat(my_triangle.getLinesCopy())
+  }
+  let draw_lines = []
+  
+  
+  // draw scene
+  background(255,255,255); // Set the background to white
+
+  settings.lines_drawn = 0
+  for (let my_triangle of my_triangles) {
+    settings.lines_drawn += my_triangle.draw2d(window.innerWidth, window.innerHeight, settings )
   }
   for (my_line of my_lines) {
-    my_line.draw2d(window.innerWidth, window.innerHeight)
+    settings.lines_drawn += my_line.draw2d(window.innerWidth, window.innerHeight)
   }
+
+
 
 
   this.stats.end();
@@ -211,5 +229,6 @@ function resize() {
   console.log("resize")
   resizeCanvas(window.innerWidth, window.innerHeight)
   settings.aspect = window.innerWidth / window.innerHeight
+  draw()
 
 }

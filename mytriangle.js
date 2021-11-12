@@ -1,34 +1,41 @@
 
-const NO_LINES = 3
 
 class MyTriangle {
     constructor (p1,p2,p3) {
+        this.NO_POINTS = 3
 
-        this.lines = Array(NO_LINES)
+        this.lines = Array(this.NO_POINTS)
         this.lines[0] = new MyLine(p1, p2)
         this.lines[1] = new MyLine(p2, p3)
         this.lines[2] = new MyLine(p3, p1)
-        this._det_normal()
+        this.det_normal()
 
     }
     scale(S) {
         for (let my_line of this.lines) {
             my_line.scale(S)
         }
-        // this.p1 = scale3(this.p1, S)
-        // this.p2 = scale3(this.p2, S)
-        // this.p3 = scale3(this.p3, S)
     }
     translate(t) {
         for (let my_line of this.lines) {
             my_line.translate(t)
         }
-        this._det_normal()
     }
 
-    _det_normal() {
+    det_normal() {
         this.normal = normal3(this.lines[0].p[0],this.lines[1].p[0],this.lines[2].p[0])
     }
+
+    lineIntersect(line) {
+        //https://en.wikipedia.org/wiki/Line%E2%80%93plane_intersection
+        https://en.wikipedia.org/wiki/Line%E2%80%93line_intersection
+        p0 = this.lines[0].p[0]
+        l0 = line.p[0]
+        l = line.get_direction()
+        let noemer = dot3(l,this.normal)
+        let teller = 
+    }
+
 
     light(l) {
         let shading = dot3(this.normal, l)
@@ -37,23 +44,14 @@ class MyTriangle {
         } else {
             this.shading = 0;
         }
+
     }
 
     project(M4) {
-        // let p1 = [...this.p1]
-        // p1.push(1)
-        // let p2 = [...this.p2]
-        // p2.push(1)
-        // let p3 = [...this.p3]
-        // p3.push(1)
-        // this.v1 = transform4(p1, M4)
-        // this.v2 = transform4(p2, M4)
-        // this.v3 = transform4(p3, M4)
-        // this.vn = normal3(this.v1,this.v2,this.v3)
         for (let my_line of this.lines) {
             my_line.project(M4)
         }
-        this._det_normal()
+        this.det_normal()
 
     }
 
@@ -69,16 +67,25 @@ class MyTriangle {
         endShape()
     }
 
-    draw2d(w, h, my_light, draw_edges=true, draw_normal=true, draw_hatching=true) {
+    getLinesCopy(settings) {
+        let my_lines = []
+        for (let my_line of this.lines) {
+            my_lines.concat(my_line.get_copy())
+        }
+        return my_lines
+    }
+
+    draw2d(w, h, settings) {
+        let lines_drawn = 0
         stroke(color(1,1,1))
 
         if (this.normal[2]<0){  // only draw fronts
             // let s1 = center2dscreen(w,h,this.v1)
             // let s2 = center2dscreen(w,h,this.v2)
             // let s3 = center2dscreen(w,h,this.v3)
-            if (draw_edges){
+            if (settings.draw_edges){
                 for (let my_line of this.lines) {
-                    my_line.draw2d(w,h)
+                    lines_drawn +=  my_line.draw2d(w,h)
                 }
                 // stroke(color(1,1,1))
                 // strokeWeight(1)
@@ -87,18 +94,22 @@ class MyTriangle {
                 // line(s3[X], s3[Y], s1[X], s1[Y])
             }
 
-            if (draw_normal) {
-                // stroke(color(255,0,0))
-                // strokeWeight(1)
-                let center  = centerv3(this.v1,this.v2,this.v3)
-                let scaled_normal = scale3(this.normal,50)
-                let center2 = add3(scaled_normal, center)
-                let s1 = center2dscreen(w,h,center)
-                let s2 = center2dscreen(w,h,center2)
-                line(s1[X], s1[Y], s2[X], s2[Y])
+            if (settings.draw_normal) {
+                for(let i = 0; i < this.NO_POINTS; i++) {
+                    // stroke(color(255,0,0))
+                    // strokeWeight(1)
+                    let c1  = centerv3(this.lines[0].p[0], this.lines[1].p[0], this.lines[2].p[0])
+                    let scaled_normal = scale3(this.normal,10)
+                    let c2 = add3(scaled_normal, c1)
+                    let s1 = center2dscreen(w,h,c1)
+                    let s2 = center2dscreen(w,h,c2)
+                    line(s1[X], s1[Y], s2[X], s2[Y])
+                    lines_drawn +=  1
+                }
+
             }
 
-            if (draw_hatching) {
+            if (settings.draw_hatching) {
                 let p1 = this.lines[0].p[0]
                 let p2 = this.lines[1].p[0]
                 let p3 = this.lines[2].p[0]
@@ -127,7 +138,7 @@ class MyTriangle {
                 // https://www.tutorialspoint.com/Check-whether-a-given-point-lies-inside-a-Triangle
 
 
-                let hatch_spacing =  0.0002 + (this.shading)*0.003 //pixels, to be replaces with shading
+                let hatch_spacing =  settings.hatch_min + (this.shading)*settings.hatch_grad //pixels, to be replaces with shading
                 // let hatch_spacing = 0.002
                 for (let x = sqr_bl[X]; x < sqr_tr[X]; x += hatch_spacing) {
                     let b = [x,bottom[Y], 0]
@@ -135,7 +146,7 @@ class MyTriangle {
 
                     let hatch_line = new MyLine(b,t)
                     let i_is = []  // intersectes within the square/triangle
-                    for (let i = 0; i < NO_LINES; i ++) {
+                    for (let i = 0; i < this.NO_POINTS; i ++) {
                         let is = hatch_line.intersectionXY(this.lines[i])
                         let is_in = insideTriangle(p1,p2,p3,is)
                         if (is_in) {
@@ -146,9 +157,11 @@ class MyTriangle {
                         let s1 = center2dscreen(w,h,i_is[0])
                         let s2 = center2dscreen(w,h,i_is[1])
                         line(s1[X], s1[Y], s2[X], s2[Y])
-                        }
+                        lines_drawn +=  1
+                    }
                 }
             }
         }
+        return lines_drawn 
     }
 }

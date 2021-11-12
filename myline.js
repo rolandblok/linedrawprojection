@@ -1,12 +1,18 @@
 
-const NO_POINTS = 2
 class MyLine {
     constructor (p1,p2, c=[0,0,0]) {
+        this.NO_POINTS = 2
         this.c = color(c)
-        this.p = Array(NO_POINTS)
+        this.p = Array(this.NO_POINTS)
         this.p[0] = [...p1]
         this.p[1] = [...p2]
+    }
 
+    get_direction() {
+        return sub3(this.p[0], this.p[1])
+    }
+    get_copy() {
+        return new MyLine(this.p[0], this.p[1], this.c)
     }
 
     scale(S) {
@@ -14,7 +20,7 @@ class MyLine {
         this.p[1] = scale3(this.p[1], S)
     }
     translate(t) {
-        for (let i = 0; i < NO_POINTS; i++) {
+        for (let i = 0; i < this.NO_POINTS; i++) {
             this.p[i] = add3(this.p[i], t)
         }
     }
@@ -25,9 +31,6 @@ class MyLine {
 
         this.p[0] = (transform4(p0, M4))  // don't know yet if the array being 4 elemenst is problem
         this.p[1] = (transform4(p1, M4))
-
-        
-
 
     }
 
@@ -46,6 +49,7 @@ class MyLine {
         let c1 = center2dscreen(w,h,this.p[0])
         let c2 = center2dscreen(w,h,this.p[1])
         line(c1[X], c1[Y], c2[X], c2[Y])
+        return 1
     }
 
     /* get the projected vectors */
