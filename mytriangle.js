@@ -31,26 +31,41 @@ class MyTriangle {
      * calculate intersection triangle with line.
      * 
      * @param {*} line 
-     * @returns [bool: interesction within triangle, point of intersection]
+     * @returns v3: point of intersection, NaN if no interserction
      */
-    lineIntersect(line) {
+    linePlaneIntersect(line_arg) {
         // https://en.wikipedia.org/wiki/Line%E2%80%93plane_intersection
-        // https://en.wikipedia.org/wiki/Line%E2%80%93line_intersection
-        p0 = this.lines[0].p[0]
-        l0 = line.p[0]
-        l = line.get_direction()
+        let p0 = this.lines[0].p[0]
+        let l0 = line_arg.p[0]
+        let l = line_arg.get_direction()
         let teller = dot3(sub3(p0, l0), this.normal)
         let noemer = dot3(l,this.normal)
-        if (Math.abs(noemer) < FLOATING_POINT_ACCURACY ) {
-            return [false,NaN]
-        } else {
+        if (Math.abs(noemer) > FLOATING_POINT_ACCURACY ) {
             let d = teller / noemer
-            let p = add3(l0,scale3(l, d))
-            let is_in = insideTriangle(this.lines[0].p[0],this.lines[1].p[0],this.lines[2].p[0],is)
+            let p = add3(l0, scale3(l, d))
+            if (insideTriangleXY(this.lines[0].p[0],this.lines[1].p[0],this.lines[2].p[0], p)) {
+                return p
+            }
         }
-
+        return NaN
     }
 
+    /**
+     * check if line overlaps (from top view) this triangle
+     *  // https://en.wikipedia.org/wiki/Line%E2%80%93line_intersection
+     *  @returns
+     *     [] array with all intersection points, empty if none.
+     */
+    lineMyLinesIntersect(line_arg) {
+        let p = []
+        for (let cur_line in this.lines) {
+            res = cur_line.intersectionXY(line_arg)
+            if ( res != NaN) {
+                p.push(res)
+            }
+        }
+        return p
+    }
 
     light(l) {
         let shading = dot3(this.normal, l)
@@ -85,7 +100,8 @@ class MyTriangle {
     getLinesCopy(settings) {
         let my_lines = []
         for (let my_line of this.lines) {
-            my_lines.concat(my_line.get_copy())
+            let copy  = my_line.get_copy()
+            my_lines = my_lines.concat(copy)
         }
         return my_lines
     }
@@ -163,7 +179,7 @@ class MyTriangle {
                     let i_is = []  // intersectes within the square/triangle
                     for (let i = 0; i < this.NO_POINTS; i ++) {
                         let is = hatch_line.intersectionXY(this.lines[i])
-                        let is_in = insideTriangle(p1,p2,p3,is)
+                        let is_in = insideTriangleXY(p1,p2,p3,is)
                         if (is_in) {
                             i_is.push(is)
                         }

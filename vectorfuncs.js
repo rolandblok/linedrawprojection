@@ -127,11 +127,11 @@ const normal3=(v1,v2,v3)=>{
     let n = normalize3(c)
     return n
 }
-const triangleArea2=(p1,p2,p3)=>{
+const triangleAreaXY=(p1,p2,p3)=>{
     return Math.abs((p1[X]*(p2[Y]-p3[Y]) + p2[X]*(p3[Y]-p1[Y])+ p3[X]*(p1[Y]-p2[Y]))/2.0);    
 }
-const insideTriangle=(p1,p2,p3,p)=>{
-    let area = triangleArea2(p1,p2,p3)
-    let arear = triangleArea2(p,p2,p3) + triangleArea2(p1,p,p3)+triangleArea2(p1,p2,p)
+const insideTriangleXY=(p1,p2,p3,p)=>{
+    let area = triangleAreaXY(p1,p2,p3)
+    let arear = triangleAreaXY(p,p2,p3) + triangleAreaXY(p1,p,p3)+triangleAreaXY(p1,p2,p)
     return (arear - area) <= FLOATING_POINT_ACCURACY
 }
