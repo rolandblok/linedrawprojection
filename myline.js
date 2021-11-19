@@ -9,7 +9,7 @@ class MyLine {
     }
 
     get_direction() {
-        return sub3(this.p[0], this.p[1])
+        return sub3(this.p[1], this.p[0])
     }
     get_copy() {
         return new MyLine(this.p[0], this.p[1], this.c)

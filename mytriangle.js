@@ -26,14 +26,29 @@ class MyTriangle {
         this.normal = normal3(this.lines[0].p[0],this.lines[1].p[0],this.lines[2].p[0])
     }
 
+
+    /**
+     * calculate intersection triangle with line.
+     * 
+     * @param {*} line 
+     * @returns [bool: interesction within triangle, point of intersection]
+     */
     lineIntersect(line) {
-        //https://en.wikipedia.org/wiki/Line%E2%80%93plane_intersection
-        https://en.wikipedia.org/wiki/Line%E2%80%93line_intersection
+        // https://en.wikipedia.org/wiki/Line%E2%80%93plane_intersection
+        // https://en.wikipedia.org/wiki/Line%E2%80%93line_intersection
         p0 = this.lines[0].p[0]
         l0 = line.p[0]
         l = line.get_direction()
+        let teller = dot3(sub3(p0, l0), this.normal)
         let noemer = dot3(l,this.normal)
-        let teller = 
+        if (Math.abs(noemer) < FLOATING_POINT_ACCURACY ) {
+            return [false,NaN]
+        } else {
+            let d = teller / noemer
+            let p = add3(l0,scale3(l, d))
+            let is_in = insideTriangle(this.lines[0].p[0],this.lines[1].p[0],this.lines[2].p[0],is)
+        }
+
     }
 
 
