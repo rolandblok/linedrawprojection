@@ -78,7 +78,7 @@ const perspective4m=(a,b)=>{ // fovy, aspect
    * @param far    Number Distance to the far clipping plane along the -Z axis
    * @return Float32Array A perspective transformation matrix
    */
-  const createFrustum =(left, right, bottom, top, near, far)=> {
+  const createFrustumPersp =(left, right, bottom, top, near, far)=> {
     // http://learnwebgl.brown37.net/transformations2/matrix_library_introduction.html
     // https://learnwebgl.brown37.net/08_projections/projections_perspective.html
     let M = Array(16)
@@ -94,20 +94,46 @@ const perspective4m=(a,b)=>{ // fovy, aspect
     M[3] = 0;  M[7] = 0;  M[11] = -1;  M[15] = 0;
     return M;
   }
+   /** -----------------------------------------------------------------
+   * Set a perspective projection matrix based on limits of a frustum.
+   * @param left   Number Farthest left on the x-axis
+   * @param right  Number Farthest right on the x-axis
+   * @param bottom Number Farthest down on the y-axis
+   * @param top    Number Farthest up on the y-axis
+   * @param near   Number Distance to the near clipping plane along the -Z axis
+   * @param far    Number Distance to the far clipping plane along the -Z axis
+   * @return Float32Array A perspective transformation matrix
+   */
+    const createFrustumOrtho =(left, right, bottom, top, near, far)=> {
+        // http://learnwebgl.brown37.net/transformations2/matrix_library_introduction.html
+        // https://learnwebgl.brown37.net/08_projections/projections_perspective.html
+        let M = Array(16)
+        let sx = 2 / (right - left);
+        let sy = 2 / (top - bottom);
+        let c1 = (far+near) / (near - far);
+        let c2 = - 2 / (far - near);
+        let tx = - (left + right) / (right - left);
+        let ty = - (bottom + top) / (top - bottom);
+        M[0] = sx; M[4] = 0;  M[8] = 0;    M[12] = tx;
+        M[1] = 0;  M[5] = sy; M[9] = 0;    M[13] = ty;
+        M[2] = 0;  M[6] = 0;  M[10] = c2;  M[14] = c1;
+        M[3] = 0;  M[7] = 0;  M[11] = 0;  M[15] = 1;
+        return M;
+      }
 const createPerspectiveUsingFrustum=(fovy, aspect, near, far)=>{
     // https://www.scratchapixel.com/code.php?id=4&origin=/lessons/3d-basic-rendering/perspective-and-orthographic-projection-matrix
     // https://learnwebgl.brown37.net/08_projections/projections_perspective.html
     let top, bottom, left, right;
-    top = near * Math.tan((fovy*(Math.PI/180))/2);
+    top = near * Math.tan((fovy*(Math.PI/180))/1);
     bottom = -top;
     right = top * aspect;
     left = -right;
-    return createFrustum(left, right, bottom, top, near, far);
+    return createFrustumOrtho(left, right, bottom, top, near, far);
   }
 const center2dscreen=(w,h,v4)=> {
     const d=new Float32Array(2);
-    d[0]=w/2+w*v4[0]
-    d[1]=h/2-h*v4[1]
+    d[0]=w/2+v4[0]
+    d[1]=h/2-v4[1]
     return d
 }
 const unitm=(n)=>{

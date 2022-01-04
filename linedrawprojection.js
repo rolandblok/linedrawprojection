@@ -131,7 +131,7 @@ function draw() {
 
   let s = my_sphere([50, -100, 0], 50, 3)
   my_triangles = my_triangles.concat(s)
-  s = my_sphere([0, 50, 0], 20, 1)
+  s = my_sphere([0, 50, 0], 20, 0)
   my_triangles = my_triangles.concat(s)
   s = my_sphere([0, -50, 50], 20, 2)
   my_triangles = my_triangles.concat(s)
