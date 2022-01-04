@@ -76,7 +76,7 @@ class MyLine {
      * Intersection with the other line in 2 dimensions (xy)
      * returns [v3  : intersection point, only if within line-piece : NO Z])
      */
-    intersectionXY(L2) {
+    intersectionXY(L2, strict = true) {
         // https://en.wikipedia.org/wiki/Line%E2%80%93line_intersection
         let x1 = this.x1
         let x2 = this.x2
@@ -91,15 +91,18 @@ class MyLine {
         if(Math.abs(noemer) > FLOATING_POINT_ACCURACY ) {
             let t_teller = ((x1-x3)*(y3-y4) - (y1-y3)*(x3-x4)) 
             let u_teller = ((x1-x3)*(y1-y2) - (y1-y3)*(x1-x2)) 
+            let t = t_teller / noemer
 
             let p = Array(2)
             p[0] = x1 + t*(x2-x1)
             p[1] = y1 + t*(y2-y1)
 
-            if ((t_teller > 0) && (t_teller < 1) && 
-                (u_teller > 0) && (u_teller < 1)    ) {
+            if (strict && ((t_teller > 0) && (t_teller < 1) && 
+                 (u_teller > 0) && (u_teller < 1)    )) {
                     // p[2] = this.z1 + t*(this.z2 - this.z1)
                     return p
+            } else {
+                return p
             }
         }
 

@@ -129,17 +129,17 @@ function draw() {
   a = [0, 0, 20]
   my_triangles.push(new MyTriangle(a, b, c))
 
-  // let s = my_sphere([50, -100, 0], 50, 3)
-  // my_triangles = my_triangles.concat(s)
-  // s = my_sphere([0, 50, 0], 20, 1)
-  // my_triangles = my_triangles.concat(s)
-  // s = my_sphere([0, -50, 50], 20, 2)
-  // my_triangles = my_triangles.concat(s)
-  // s = my_sphere([0, -150, 100], 20, 2)
-  // my_triangles = my_triangles.concat(s)
+  let s = my_sphere([50, -100, 0], 50, 3)
+  my_triangles = my_triangles.concat(s)
+  s = my_sphere([0, 50, 0], 20, 1)
+  my_triangles = my_triangles.concat(s)
+  s = my_sphere([0, -50, 50], 20, 2)
+  my_triangles = my_triangles.concat(s)
+  s = my_sphere([0, -150, 100], 20, 2)
+  my_triangles = my_triangles.concat(s)
 
-  // s = my_sphere([-220, -220, 0], 20, 2)
-  // my_triangles = my_triangles.concat(s)
+  s = my_sphere([-220, -220, 0], 20, 2)
+  my_triangles = my_triangles.concat(s)
 
   // LIGHT DIRECTION
   my_lines.push(new MyLine([0, 0, 0], scale3(my_light, 150), [0, 0, 0]))
@@ -189,39 +189,39 @@ function draw() {
   }
 
    
-  // check all intersections of lines with triangles : split these lines.
-  let all_lines2 = []
-  for (let my_line of all_lines) {
-    let my_cur_lines = []  // because we could split lines, we have a current lines array!
-    my_cur_lines.push(my_line)
-    for (let my_triangle of my_triangles) {
-      let split_off_lines = [] // I dont' want to check the split lines again for the same triangle.
-      for (const [i, my_cur_line] of my_cur_lines.entries()) {
-        // check if the line intersects      
-        p = my_triangle.linePlaneIntersect(my_cur_line)
-//  TODO ROLAND : nu als line op rand ligt, wordt deze weer gesplits!!!
-        if (!Object.is(p, NaN)) { 
-          // it intersects : split it. obscuration will be handdles laterz
-          my_cur_lines.splice(i,1)  // remove current line, and replace by parts.
-          my_cur_lines.push(new MyLine(my_cur_line.p[0], p)) 
-          my_cur_lines.push(new MyLine(p, my_cur_line.p[1])) 
-        }
-      }
-    }
-    all_lines2 = all_lines2.concat(my_cur_lines)
-  }
+//   // check all intersections of lines with triangles : split these lines.
+//   let all_lines2 = []
+//   for (let my_line of all_lines) {
+//     let my_cur_lines = []  // because we could split lines, we have a current lines array!
+//     my_cur_lines.push(my_line)
+//     for (let my_triangle of my_triangles) {
+//       let split_off_lines = [] // I dont' want to check the split lines again for the same triangle.
+//       for (const [i, my_cur_line] of my_cur_lines.entries()) {
+//         // check if the line intersects      
+//         p = my_triangle.linePlaneIntersect(my_cur_line)
+// //  TODO ROLAND : nu als line op rand ligt, wordt deze weer gesplits!!!
+//         if (!Object.is(p, NaN)) { 
+//           // it intersects : split it. obscuration will be handdles laterz
+//           my_cur_lines.splice(i,1)  // remove current line, and replace by parts.
+//           my_cur_lines.push(new MyLine(my_cur_line.p[0], p)) 
+//           my_cur_lines.push(new MyLine(p, my_cur_line.p[1])) 
+//         }
+//       }
+//     }
+//     all_lines2 = all_lines2.concat(my_cur_lines)
+//   }
 
 
   // draw scene
   background(255, 255, 255); // Set the background to white
 
   settings.lines_drawn = 0
-  // for (let my_triangle of my_triangles) {
-  //   settings.lines_drawn += my_triangle.draw2d(window.innerWidth, window.innerHeight, settings )
-  // }
-  for (my_line of all_lines2) {
-    settings.lines_drawn += my_line.draw2d(window.innerWidth, window.innerHeight)
+  for (let my_triangle of my_triangles) {
+    settings.lines_drawn += my_triangle.draw2d(window.innerWidth, window.innerHeight, settings )
   }
+  // for (my_line of all_lines) {
+  //   settings.lines_drawn += my_line.draw2d(window.innerWidth, window.innerHeight)
+  // }
 
 
 

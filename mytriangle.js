@@ -178,7 +178,7 @@ class MyTriangle {
                     let hatch_line = new MyLine(b,t)
                     let i_is = []  // intersectes within the square/triangle
                     for (let i = 0; i < this.NO_POINTS; i ++) {
-                        let is = hatch_line.intersectionXY(this.lines[i])
+                        let is = hatch_line.intersectionXY(this.lines[i], false)
                         let is_in = insideTriangleXY(p1,p2,p3,is)
                         if (is_in) {
                             i_is.push(is)
