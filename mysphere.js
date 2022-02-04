@@ -36,7 +36,7 @@ function my_sphere(p,R,devisions) {
     return triangles
 }
 function subdivide(v1,v2,v3, depth) {
-    triangles = []
+    let triangles = []
     if (depth == 0) {
         triangles.push(new MyTriangle( v1, v2, v3 ))
         return triangles
