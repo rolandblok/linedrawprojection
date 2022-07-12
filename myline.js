@@ -92,18 +92,18 @@ class MyLine {
             let t_teller = ((x1-x3)*(y3-y4) - (y1-y3)*(x3-x4)) 
             let u_teller = ((x1-x3)*(y1-y2) - (y1-y3)*(x1-x2)) 
             let t = t_teller / noemer
+            let u = u_teller / noemer
 
             let p = Array(2)
             p[0] = x1 + t*(x2-x1)
             p[1] = y1 + t*(y2-y1)
 
-            if (strict && ((t_teller > 0) && (t_teller < 1) && 
-                 (u_teller > 0) && (u_teller < 1)    )) {
-                    // p[2] = this.z1 + t*(this.z2 - this.z1)
-                    return p
-            } else {
+            if (!strict ){
+                return p;
+            } else if ((t > 0) && (t < 1) && (u > 0) && (u < 1)) {
+                // p[2] = this.z1 + t*(this.z2 - this.z1)
                 return p
-            }
+            } 
         }
 
         return NaN
